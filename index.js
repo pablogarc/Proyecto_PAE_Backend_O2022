@@ -7,12 +7,7 @@ const app = express();
 const apiKey = process.env.API_KEY;
 const port = process.env.PORT || 3000;
 
-// Static files
-app.use('/static', express.static(path.join(__dirname, 'src/')));
-
-app.get(['/', '/home', '/index'], (req, res) => {
-    res.sendFile();
-})
+app.use('/', require ('./routes/movies.routes'), require ('./routes/users.routes'));
 
 app.listen(port, () => {
     console.log(`App is running in port ${port}`);
