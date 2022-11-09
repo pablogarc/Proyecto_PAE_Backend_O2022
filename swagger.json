@@ -1,0 +1,17 @@
+{
+  "swaggerDefinition": {
+    "swagger": "2.0",
+    "info": {
+      "description": "Basic API to manage information about MOVITESO",
+      "version": "1.0.0",
+      "title": "MOVITESO",
+      "contact": {
+        "author": "Juan Garcia",
+        "email": ""
+      }
+    },
+    "basePath": "/",
+    "host": "localhost:3000"
+  },
+  "apis": ["./routes/*.routes.js"]
+}

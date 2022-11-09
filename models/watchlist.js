@@ -3,47 +3,65 @@ const database = require("./../database/database");
 
 class WatchList {
   async findOne(userId) {
-    const collection = database().collection("watchlist");
-    const watchList = await collection.findOne({ user_id: ObjectId(userId) });
-    return watchList;
+    try {
+      const collection = database().collection("watchlist");
+      const watchList = await collection.findOne({ user_id: ObjectId(userId) });
+      return watchList;
+    } catch (err) {
+      return false;
+    }
   }
 
   async insert(userId) {
     const collection = database().collection("watchlist");
+    const watchList = await collection.findOne({ user_id: ObjectId(userId) });
+
+    if(watchList) return false;
+
     const query = {
       user_id: ObjectId(userId),
       movies: [],
     };
-    const watchList = await collection.insertOne(query);
-    return watchList;
+
+    await collection.insertOne(query);
+    return true;
   }
 
   async update(userId, movieId, flag) {
-    const collection = database().collection("watchlist");
+    try {
+      const collection = database().collection("watchlist");
 
-    if (flag === "remove") {
-      const updateWatchList = await collection.updateOne(
+      if (flag === "remove") {
+        await collection.updateOne(
+          { user_id: ObjectId(userId) },
+          { $pull: { movies: Number(movieId) } }
+        );
+        const msg = "this item have been removed";
+        return msg;
+      }
+
+      await collection.updateOne(
         { user_id: ObjectId(userId) },
-        { $pull: { movies: Number(movieId) } }
+        { $push: { movies: Number(movieId) } }
       );
-      const msg = "this item have been removed";
+      const msg = "this item have been added";
       return msg;
+    } catch (err) {
+      return false;
     }
-
-    const updateWatchList = await collection.updateOne(
-      { user_id: ObjectId(userId) },
-      { $push: { movies: Number(movieId) } }
-    );
-    const msg = "this item have been added";
-    return msg;
   }
 
   async delete(userId) {
-    const collection = database().collection("watchlist");
-    const deleteWatchList = await collection.deleteOne({
-      user_id: ObjectId(userId),
-    });
-    return deleteWatchList;
+    try {
+      const collection = database().collection("watchlist");
+      const deleteWatchList = await collection.deleteOne({
+        user_id: ObjectId(userId),
+      });
+      if (deleteWatchList.deletedCount === 0) return false;
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
 }
 

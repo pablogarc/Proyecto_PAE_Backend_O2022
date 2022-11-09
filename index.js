@@ -1,5 +1,4 @@
 const express = require("express");
-const axios = require("axios");
 const path = require("path");
 const database = require("./database");
 const moviesRoutes = require("./routes/movies.routes");
@@ -11,9 +10,19 @@ const watchListRoutes = require("./routes/watchlist.routes");
 require("dotenv").config();
 
 const app = express();
-const apiKey = process.env.API_KEY;
 const port = process.env.PORT || 3000;
 
+// swagger
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
+const swaggerOptions = require("./swagger.json");
+const swaggerDocument = swaggerJsDoc(swaggerOptions);
+
+// middlewares
+app.use(express.json());
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// Routes
 app.use(
   "/",
   moviesRoutes,
@@ -24,6 +33,7 @@ app.use(
   watchListRoutes
 );
 
+// connect to database
 database
   .connect()
   .then((client) => {
