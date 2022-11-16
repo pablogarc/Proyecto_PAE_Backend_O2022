@@ -22,6 +22,8 @@ const {
  *     tags:
  *       - recommendation
  *     description: Returns a list of all recommendations of a sender user
+ *     security:
+ *       - BearerHeader: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -34,7 +36,7 @@ const {
  *       400:
  *         description: Invalid request
  */
-router.get("/user/:id/recommendations", recommendations);
+router.get("/user/:id/recommendations", verifyToken, recommendations);
 
 /**
  * @swagger
@@ -43,6 +45,8 @@ router.get("/user/:id/recommendations", recommendations);
  *     tags:
  *       - recommendation
  *     description: create recommendation
+ *     security:
+ *       - BearerHeader: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -70,7 +74,11 @@ router.get("/user/:id/recommendations", recommendations);
  *       400:
  *         description: Invalid request
  */
-router.post("/user/:id/recommendations/:user_id", new_recommendation);
+router.post(
+  "/user/:id/recommendations/:user_id",
+  verifyToken,
+  new_recommendation
+);
 
 /**
  * @swagger
@@ -79,6 +87,8 @@ router.post("/user/:id/recommendations/:user_id", new_recommendation);
  *     tags:
  *       - recommendation
  *     description: update recommendation
+ *     security:
+ *       - BearerHeader: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -108,6 +118,7 @@ router.post("/user/:id/recommendations/:user_id", new_recommendation);
  */
 router.put(
   "/user/:id/recommendations/:recommendation_id",
+  verifyToken,
   update_recommendation
 );
 
@@ -118,6 +129,8 @@ router.put(
  *     tags:
  *       - recommendation
  *     description: delete recommendation
+ *     security:
+ *       - BearerHeader: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -137,6 +150,7 @@ router.put(
  */
 router.delete(
   "/user/:id/recommendations/:recommendation_id",
+  verifyToken,
   delete_recommendation
 );
 

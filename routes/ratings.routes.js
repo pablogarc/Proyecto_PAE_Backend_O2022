@@ -43,6 +43,8 @@ router.get("/movie/:id/ratings", rates);
  *     tags:
  *       - rating
  *     description: create rating
+ *     security:
+ *       - BearerHeader: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -70,7 +72,7 @@ router.get("/movie/:id/ratings", rates);
  *       400:
  *         description: Invalid request
  */
-router.post("/movie/:id/ratings/:user_id", new_rate);
+router.post("/movie/:id/ratings/:user_id", verifyToken, new_rate);
 
 /**
  * @swagger
@@ -79,6 +81,8 @@ router.post("/movie/:id/ratings/:user_id", new_rate);
  *     tags:
  *       - rating
  *     description: update rating
+ *     security:
+ *       - BearerHeader: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -107,7 +111,7 @@ router.post("/movie/:id/ratings/:user_id", new_rate);
  *       400:
  *         description: Invalid request
  */
-router.put("/movie/:id/ratings/:rating_id", update_rate);
+router.put("/movie/:id/ratings/:rating_id", verifyToken, update_rate);
 
 /**
  * @swagger
@@ -116,6 +120,8 @@ router.put("/movie/:id/ratings/:rating_id", update_rate);
  *     tags:
  *       - rating
  *     description: delete rating
+ *     security:
+ *       - BearerHeader: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -133,6 +139,6 @@ router.put("/movie/:id/ratings/:rating_id", update_rate);
  *       400:
  *         description: Invalid request
  */
-router.delete("/movie/:id/ratings/:rating_id", delete_rate);
+router.delete("/movie/:id/ratings/:rating_id", verifyToken, delete_rate);
 
 module.exports = router;

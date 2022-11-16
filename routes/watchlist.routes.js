@@ -34,7 +34,7 @@ const {
  *       400:
  *         description: Invalid request
  */
-router.get("/user/:id/watchlist", watchList);
+router.get("/user/:id/watchlist", verifyToken, watchList);
 
 /**
  * @swagger
@@ -91,7 +91,7 @@ router.post("/user/:id/watchlist", new_watchList);
  *       400:
  *         description: Invalid request
  */
-router.put("/user/:id/watchlist/:movie_id", update_watchList);
+router.put("/user/:id/watchlist/:movie_id", verifyToken, update_watchList);
 
 /**
  * @swagger
@@ -112,6 +112,6 @@ router.put("/user/:id/watchlist/:movie_id", update_watchList);
  *       400:
  *         description: Invalid request
  */
-router.delete("/user/:id/watchlist", delete_watchList);
+router.delete("/user/:id/watchlist", verifyToken, delete_watchList);
 
 module.exports = router;

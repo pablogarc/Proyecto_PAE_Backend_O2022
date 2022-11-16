@@ -4,6 +4,7 @@ const { verifyToken } = require("../middlewares/jwt");
 const {
   single_user,
   users,
+  googleLogin,
   login,
   new_user,
   delete_user,
@@ -15,6 +16,12 @@ const {
  * tags:
  *   name: user
  *   description: Operations about user
+ *
+ * securityDefinitions:
+ *   BearerHeader:
+ *     type: apiKey
+ *     in: header
+ *     name: authorization
  */
 
 /**
@@ -24,6 +31,8 @@ const {
  *     tags:
  *       - user
  *     description: Get user by id
+ *     security:
+ *       - BearerHeader: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -36,7 +45,7 @@ const {
  *       400:
  *         description: Invalid request
  */
-router.get("/user/:id", single_user);
+router.get("/user/:id", verifyToken, single_user);
 
 /**
  * @swagger
@@ -45,13 +54,44 @@ router.get("/user/:id", single_user);
  *     tags:
  *       - user
  *     description: Get all users
+ *     security:
+ *       - BearerHeader: []
  *     responses:
  *       200:
  *         description: Successfully returned information about users
  *       400:
  *         description: Invalid request
  */
-router.get("/users", users);
+router.get("/users", verifyToken, users);
+
+/**
+ * @swagger
+ * /google:
+ *   post:
+ *     tags:
+ *       - user
+ *     description: Log in with your google account
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: data of the user to log in
+ *         schema:
+ *           type: object
+ *           required:
+ *             - full_name
+ *             - email
+ *           properties:
+ *             full_name:
+ *               type: string
+ *             email:
+ *               type: string
+ *     responses:
+ *       200:
+ *         description: Successfully returned a valid token
+ *       400:
+ *         description: Invalid request
+ */
+router.post("/google", googleLogin);
 
 /**
  * @swagger
@@ -99,19 +139,12 @@ router.post("/login", login);
  *             - full_name
  *             - email
  *             - password
- *             - image
- *             - description
  *           properties:
  *             full_name:
  *               type: string
  *             email:
  *               type: string
  *             password:
- *               type: string
- *             image:
- *               type: string
- *               format: base64
- *             description:
  *               type: string
  *     responses:
  *       200:
@@ -128,6 +161,8 @@ router.post("/user", new_user);
  *     tags:
  *       - user
  *     description: update user
+ *     security:
+ *       - BearerHeader: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -136,7 +171,7 @@ router.post("/user", new_user);
  *         type: string
  *       - in: body
  *         name: body
- *         description: data of the user to create it
+ *         description: data of the user to update it
  *         schema:
  *           type: object
  *           properties:
@@ -150,7 +185,7 @@ router.post("/user", new_user);
  *       400:
  *         description: Invalid request
  */
-router.put("/user/:id", update_user);
+router.put("/user/:id", verifyToken, update_user);
 
 /**
  * @swagger
@@ -159,6 +194,8 @@ router.put("/user/:id", update_user);
  *     tags:
  *       - user
  *     description: delete user
+ *     security:
+ *       - BearerHeader: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -171,6 +208,6 @@ router.put("/user/:id", update_user);
  *       400:
  *         description: Invalid request
  */
-router.delete("/user/:id", delete_user);
+router.delete("/user/:id", verifyToken, delete_user);
 
 module.exports = router;

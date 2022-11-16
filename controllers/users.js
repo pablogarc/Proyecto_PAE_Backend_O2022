@@ -13,11 +13,21 @@ const users = async (req, res) => {
   res.status(200).send(response);
 };
 
+const googleLogin = async (req, res) => {
+  let userData = req.body;
+  const response = await userModel.googleLogin(userData);
+  if (response === false) {
+    res.status(400).send("Invalid request");
+    return;
+  }
+  res.status(200).send(response);
+};
+
 const login = async (req, res) => {
   let userData = req.body;
   const response = await userModel.login(userData);
-  if (response === "Invalid request") {
-    res.status(400).send(response);
+  if (response === false) {
+    res.status(400).send("Invalid request");
     return;
   }
   res.status(200).send(response);
@@ -51,8 +61,9 @@ const delete_user = async (req, res) => {
 module.exports = {
   single_user,
   users,
+  googleLogin,
   login,
   new_user,
-  delete_user,
   update_user,
+  delete_user,
 };

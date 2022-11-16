@@ -24,23 +24,57 @@ class User {
     }
   }
 
+  async googleLogin(userData) {
+    try {
+      const collection = database().collection("users");
+
+      const data = await collection.findOne({
+        email: userData.email,
+        google: true,
+      });
+
+      if (!data) {
+        const query = {
+          full_name: userData.name,
+          email: userData.email,
+          image: "",
+          description: "",
+          google: true,
+        };
+        await collection.insertOne(query);
+      }
+
+      let payLoad = { email: userData.email };
+      let token = jwt.sign(payLoad, process.env.JWT_SECRET_KEY, {
+        expiresIn: "5h",
+      });
+
+      return token;
+    } catch (err) {
+      return false;
+    }
+  }
+
   async login(userData) {
-    const collection = database().collection("users");
-    const errorMsg = "Invalid request";
+    try {
+      const collection = database().collection("users");
 
-    const data = await collection.findOne({
-      email: userData.email,
-    });
+      const data = await collection.findOne({
+        email: userData.email,
+      });
 
-    if (!data) return errorMsg;
-    if (userData.password !== data.password) return errorMsg;
+      if (!data) return false;
+      if (userData.password !== data.password) return false;
 
-    let payLoad = { id: data._id };
-    let token = jwt.sign(payLoad, process.env.JWT_SECRET_KEY, {
-      expiresIn: "5h",
-    });
+      let payLoad = { email: data.email };
+      let token = jwt.sign(payLoad, process.env.JWT_SECRET_KEY, {
+        expiresIn: "5h",
+      });
 
-    return token;
+      return token;
+    } catch (err) {
+      return false;
+    }
   }
 
   async insert(userData) {
@@ -49,7 +83,14 @@ class User {
 
     if (usersData) return false;
 
-    await collection.insertOne(userData);
+    const query = {
+      full_name: userData.full_name,
+      email: userData.email,
+      password: userData.password,
+      image: "",
+      description: "",
+    };
+    await collection.insertOne(query);
     return true;
   }
 

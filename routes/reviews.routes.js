@@ -43,6 +43,8 @@ router.get("/movie/:id/reviews", reviews);
  *     tags:
  *       - review
  *     description: create Review
+ *     security:
+ *       - BearerHeader: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -70,7 +72,7 @@ router.get("/movie/:id/reviews", reviews);
  *       400:
  *         description: Invalid request
  */
-router.post("/movie/:id/reviews/:user_id", new_review);
+router.post("/movie/:id/reviews/:user_id", verifyToken, new_review);
 
 /**
  * @swagger
@@ -79,6 +81,8 @@ router.post("/movie/:id/reviews/:user_id", new_review);
  *     tags:
  *       - review
  *     description: update review
+ *     security:
+ *       - BearerHeader: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -106,7 +110,7 @@ router.post("/movie/:id/reviews/:user_id", new_review);
  *       400:
  *         description: Invalid request
  */
-router.put("/movie/:id/reviews/:review_id", update_review);
+router.put("/movie/:id/reviews/:review_id", verifyToken, update_review);
 
 /**
  * @swagger
@@ -115,6 +119,8 @@ router.put("/movie/:id/reviews/:review_id", update_review);
  *     tags:
  *       - review
  *     description: delete review
+ *     security:
+ *       - BearerHeader: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -132,6 +138,6 @@ router.put("/movie/:id/reviews/:review_id", update_review);
  *       400:
  *         description: Invalid request
  */
-router.delete("/movie/:id/reviews/:review_id", delete_review);
+router.delete("/movie/:id/reviews/:review_id", verifyToken, delete_review);
 
 module.exports = router;
