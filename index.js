@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const path = require("path");
 const database = require("./database");
 const moviesRoutes = require("./routes/movies.routes");
@@ -19,7 +20,9 @@ const swaggerOptions = require("./swagger.json");
 const swaggerDocument = swaggerJsDoc(swaggerOptions);
 
 // middlewares
+app.use(cors());
 app.use(express.json());
+app.use("/assets", express.static(path.join(__dirname, "public")));
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Routes

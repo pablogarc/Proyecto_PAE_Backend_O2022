@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { verifyToken } = require("../middlewares/jwt");
+const file = require("../middlewares/files");
 const {
   single_user,
   users,
@@ -9,6 +10,7 @@ const {
   new_user,
   delete_user,
   update_user,
+  image
 } = require("../controllers/users");
 
 /**
@@ -87,7 +89,7 @@ router.get("/users", verifyToken, users);
  *               type: string
  *     responses:
  *       200:
- *         description: Successfully returned a valid token
+ *         description: Successfully returned a valid token and an id of user
  *       400:
  *         description: Invalid request
  */
@@ -116,7 +118,7 @@ router.post("/google", googleLogin);
  *               type: string
  *     responses:
  *       200:
- *         description: Successfully returned a valid token
+ *         description: Successfully returned a valid token and an id of user
  *       400:
  *         description: Invalid request
  */
@@ -148,11 +150,13 @@ router.post("/login", login);
  *               type: string
  *     responses:
  *       200:
- *         description: User created
+ *         description: User created, token and an id of user
  *       400:
  *         description: Invalid request
  */
 router.post("/user", new_user);
+
+router.put("/user/:id/image", [verifyToken ,file.single("file")], image);
 
 /**
  * @swagger
