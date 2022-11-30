@@ -1,5 +1,7 @@
 const { ObjectId } = require("mongodb");
 const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 const database = require("./../database/database");
 require("dotenv").config();
 
@@ -26,13 +28,14 @@ class User {
 
   async googleLogin(userData) {
     try {
+      let createWatchlist = false;
       const collection = database().collection("users");
-
       const data = await collection.findOne({
-        email: userData.email
+        email: userData.email,
       });
 
       if (!data) {
+        createWatchlist = true;
         const query = {
           full_name: userData.name,
           email: userData.email,
@@ -47,6 +50,15 @@ class User {
 
       const googleUser = await collection.findOne({ email: userData.email });
 
+      if (createWatchlist) {
+        const queryWatchlist = {
+          user_id: ObjectId(googleUser._id.toString()),
+          movies: [],
+        };
+        const watchlistCollection = database().collection("watchlist");
+        await watchlistCollection.insertOne(queryWatchlist);
+      }
+
       let payLoad = { email: googleUser.email };
       let token = jwt.sign(payLoad, process.env.JWT_SECRET_KEY, {
         expiresIn: "5h",
@@ -54,8 +66,8 @@ class User {
 
       const response = {
         id: googleUser._id.toString(),
-        token: token
-      }
+        token: token,
+      };
 
       return response;
     } catch (err) {
@@ -72,7 +84,7 @@ class User {
       });
 
       if (!data) return false;
-      if (userData.password !== data.password) return false;
+      if (!bcrypt.compareSync(userData.password, data.password)) return false;
 
       let payLoad = { email: data.email };
       let token = jwt.sign(payLoad, process.env.JWT_SECRET_KEY, {
@@ -81,8 +93,8 @@ class User {
 
       const response = {
         id: data._id.toString(),
-        token: token
-      }
+        token: token,
+      };
 
       return response;
     } catch (err) {
@@ -97,17 +109,20 @@ class User {
 
       if (usersData) return false;
 
+      const salt = bcrypt.genSaltSync(saltRounds);
+      const hashPassword = bcrypt.hashSync(userData.password, salt);
+
       const query = {
         full_name: userData.name,
         email: userData.email,
-        password: userData.password,
+        password: hashPassword,
         image: "",
         description: "",
       };
       await collection.insertOne(query);
 
       const userCreated = await collection.findOne({ email: userData.email });
-      
+
       let payLoad = { email: userCreated.email };
       let token = jwt.sign(payLoad, process.env.JWT_SECRET_KEY, {
         expiresIn: "5h",
@@ -115,8 +130,8 @@ class User {
 
       const response = {
         id: userCreated._id.toString(),
-        token: token
-      }
+        token: token,
+      };
 
       return response;
     } catch (err) {
@@ -127,6 +142,12 @@ class User {
   async update(id, newData) {
     try {
       const collection = database().collection("users");
+
+      if(newData.email) {
+        const sameEmail = await collection.findOne({ email: newData.email });
+        if(sameEmail) return false;
+      }
+      
       const updateUser = await collection.updateOne(
         { _id: ObjectId(id) },
         { $set: newData }
@@ -141,7 +162,7 @@ class User {
   async updateImage(id, file) {
     try {
       const collection = database().collection("users");
-      
+
       await collection.updateOne(
         { _id: ObjectId(id) },
         { $set: { image: file.filename } }
@@ -150,7 +171,7 @@ class User {
     } catch (err) {
       return false;
     }
-  } 
+  }
 
   async delete(id) {
     try {

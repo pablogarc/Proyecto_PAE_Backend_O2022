@@ -46,7 +46,7 @@ class Review {
   async delete(id) {
     try {
       const collection = database().collection("reviews");
-      const deleteReview = await collection.deleteOne({ _id: ObjectId(id) });
+      const deleteReview = await collection.deleteMany({ user_id: ObjectId(id) });
       if (deleteReview.deletedCount === 0) return false;
       return true;
     } catch (err) {

@@ -114,7 +114,7 @@ router.put("/movie/:id/reviews/:review_id", verifyToken, update_review);
 
 /**
  * @swagger
- * /movie/{id}/reviews/{review_id}:
+ * /movie/{id}/reviews/{user_id}:
  *   delete:
  *     tags:
  *       - review
@@ -129,15 +129,15 @@ router.put("/movie/:id/reviews/:review_id", verifyToken, update_review);
  *         type: string
  *       - in: path
  *         name: review_id
- *         description: id of review
+ *         description: id of user
  *         required: true
  *         type: string
  *     responses:
  *       200:
- *         description: Review deleted
+ *         description: Reviews deleted
  *       400:
  *         description: Invalid request
  */
-router.delete("/movie/:id/reviews/:review_id", verifyToken, delete_review);
+router.delete("/movie/:id/reviews/:user_id", verifyToken, delete_review);
 
 module.exports = router;

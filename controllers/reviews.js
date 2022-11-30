@@ -25,10 +25,10 @@ const update_review = async (req, res) => {
 };
 
 const delete_review = async (req, res) => {
-  let reviewId = req.params["review_id"];
+  let reviewId = req.params["user_id"];
   const response = await reviewModel.delete(reviewId);
   if (!response) return res.status(400).send("Invalid request");
-  res.status(200).send("Review deleted");
+  res.status(200).send("Reviews deleted");
 };
 
 module.exports = {

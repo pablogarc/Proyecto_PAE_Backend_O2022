@@ -27,25 +27,33 @@ class Movie {
   }
 
   async findByTitle(title) {
-    const response = await axios.get(
-      "https://api.themoviedb.org/3/search/movie?api_key=" +
-        apiKey +
-        "&language=en-US&query=" +
-        title
-    );
-    const movies = response.data.results;
-    return movies;
+    try {
+      const response = await axios.get(
+        "https://api.themoviedb.org/3/search/movie?api_key=" +
+          apiKey +
+          "&query=" +
+          title
+      );
+      const movies = response.data.results;
+      return movies;
+    } catch (err) {
+      return false;
+    }
   }
 
   async findByGenre(genre) {
-    const response = await axios.get(
-      "https://api.themoviedb.org/3/discover/movie?api_key=" +
-        apiKey +
-        "&with_genres=" +
-        genre
-    );
-    const movies = response.data.results;
-    return movies;
+    try {
+      const response = await axios.get(
+        "https://api.themoviedb.org/3/discover/movie?api_key=" +
+          apiKey +
+          "&with_genres=" +
+          genre
+      );
+      const movies = response.data.results;
+      return movies;
+    } catch (err) {
+      return false;
+    }
   }
 }
 
